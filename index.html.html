@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ayyappaswami Powerlooms</title>
+<style>
+:root{--purple:#6426a8;--pink:#b044c9;--bg:#f5f1fc;--ink:#29213b;--muted:#716a7d;--green:#168653}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#51218f,#a43fc0);color:white;text-align:center;padding:25px 15px}
+header h1{margin:0;font-size:clamp(22px,4vw,32px)}header p{margin:8px 0 0;color:#f0e5ff}
+.topbar{display:flex;justify-content:flex-end;gap:10px;align-items:center;max-width:1100px;margin:14px auto 0;padding:0 15px}
+button,select,input{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:11px 16px;font-weight:650}
+.lang{background:white;color:var(--purple);border:1px solid #dfd2f0}
+main{max-width:1100px;margin:22px auto;padding:0 15px}
+.panel,.card{background:white;border-radius:15px;padding:22px;box-shadow:0 5px 18px #39205b12;margin-bottom:18px}
+.login{max-width:430px;margin:35px auto}.login h2,.panel h2{color:var(--purple);margin-top:0}
+label{display:block;font-weight:650;margin:14px 0 7px}
+input,select{width:100%;padding:12px;border:1px solid #d8cce8;border-radius:8px;background:#fff;color:var(--ink)}
+.primary{background:linear-gradient(120deg,var(--purple),var(--pink));color:white;margin-top:17px}
+.secondary{background:#eee7f8;color:var(--purple)}.danger{background:#ffe8e8;color:#a32121}
+.full{width:100%}.muted{color:var(--muted);font-size:14px}.error{color:#b42318;margin-top:10px}
+.hidden{display:none!important}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin:16px 0}
+.stat{background:white;padding:18px;border-radius:13px;border-left:5px solid #9345c6;box-shadow:0 4px 15px #39205b10}
+.stat small{color:var(--muted)}.stat strong{display:block;font-size:27px;color:var(--purple);margin-top:8px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.actions select{max-width:220px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:570px;margin-top:12px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #eee}th{background:#f0e8fb;color:#56228f}
+.notice{background:#fff8e7;border:1px solid #f2dfaa;padding:13px;border-radius:9px;font-size:14px;line-height:1.5}
+footer{text-align:center;padding:22px;color:var(--muted);font-size:13px}
+@media(max-width:550px){.panel{padding:16px}.topbar{justify-content:center}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧵 AYYAPPASWAMI POWERLOOMS</h1>
+  <p data-en="Saree Production & Worker Management" data-te="చీరల తయారీ మరియు కార్మికుల నిర్వహణ">Saree Production & Worker Management</p>
+</header>
+<div class="topbar">
+  <button class="lang" id="langBtn" onclick="toggleLanguage()">తెలుగు</button>
+</div>
+
+<main>
+  <section id="loginPanel" class="panel login">
+    <h2 data-en="Login" data-te="లాగిన్">Login</h2>
+    <p class="muted" data-en="Sign in as the owner or a worker." data-te="యజమాని లేదా కార్మికుడిగా లాగిన్ అవ్వండి.">Sign in as the owner or a worker.</p>
+    <label data-en="Username" data-te="యూజర్ పేరు">Username</label>
+    <input id="username" autocomplete="username" placeholder="Enter username">
+    <label data-en="Password" data-te="పాస్‌వర్డ్">Password</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Enter password">
+    <button class="primary full" onclick="login()" data-en="Login" data-te="లాగిన్">Login</button>
+    <p id="loginError" class="error"></p>
+    <div class="notice">
+      <b data-en="Demo login details" data-te="పరీక్ష కోసం లాగిన్ వివరాలు">Demo login details</b><br>
+      Owner: <code>owner</code> / <code>owner123</code><br>
+      Workers: <code>worker1</code> to <code>worker6</code> / <code>worker123</code><br><br>
+      <b>Note:</b> This is a local demo. Login details are stored in this browser and are not secure for real online use.
+    </div>
+  </section>
+
+  <section id="appPanel" class="hidden">
+    <div class="panel actions">
+      <div style="flex:1"><b id="welcome"></b><div class="muted" id="roleText"></div></div>
+      <button class="secondary" onclick="showAccountSettings()" data-en="Change username / password" data-te="యూజర్ పేరు / పాస్‌వర్డ్ మార్చండి">Change username / password</button>
+      <button class="secondary" onclick="logout()" data-en="Logout" data-te="లాగ్ అవుట్">Logout</button>
+    </div>
+
+    <section id="accountSettings" class="panel hidden">
+      <h2 data-en="Account settings" data-te="ఖాతా సెట్టింగ్‌లు">Account settings</h2>
+      <p class="muted" data-en="Change the login details for your own account." data-te="మీ ఖాతా లాగిన్ వివరాలను మార్చండి.">Change the login details for your own account.</p>
+      <label data-en="New username" data-te="కొత్త యూజర్ పేరు">New username</label>
+      <input id="newUsername" autocomplete="username" placeholder="Enter new username">
+      <label data-en="Current password" data-te="ప్రస్తుత పాస్‌వర్డ్">Current password</label>
+      <input id="currentPassword" type="password" autocomplete="current-password" placeholder="Enter current password">
+      <label data-en="New password" data-te="కొత్త పాస్‌వర్డ్">New password</label>
+      <input id="newPassword" type="password" autocomplete="new-password" placeholder="At least 6 characters">
+      <label data-en="Confirm new password" data-te="కొత్త పాస్‌వర్డ్‌ను నిర్ధారించండి">Confirm new password</label>
+      <input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Re-enter new password">
+      <div class="actions">
+        <button class="primary" onclick="changeCredentials()" data-en="Save changes" data-te="మార్పులను సేవ్ చేయండి">Save changes</button>
+        <button class="secondary" onclick="hideAccountSettings()" data-en="Cancel" data-te="రద్దు చేయండి">Cancel</button>
+      </div>
+      <p id="accountMessage" class="muted" aria-live="polite"></p>
+    </section>
+
+    <section id="ownerView" class="hidden">
+      <h2 data-en="Owner Dashboard" data-te="యజమాని డాష్‌బోర్డ్">Owner Dashboard</h2>
+      <div class="cards">
+        <div class="stat"><small data-en="Total sarees recorded" data-te="నమోదైన మొత్తం చీరలు">Total sarees recorded</small><strong id="allSarees">0</strong></div>
+        <div class="stat"><small data-en="This week's salary" data-te="ఈ వారం జీతం">This week's salary</small><strong id="weekSalary">₹0</strong></div>
+        <div class="stat"><small data-en="Payment per saree" data-te="ఒక్క చీరకు చెల్లింపు">Payment per saree</small><strong>₹750</strong></div>
+      </div>
+      <div class="panel">
+        <h2 data-en="Add sarees received from worker" data-te="కార్మికుడి నుంచి వచ్చిన చీరలను నమోదు చేయండి">Add sarees received from worker</h2>
+        <label data-en="Select worker / machine" data-te="కార్మికుడు / మిషన్ ఎంచుకోండి">Select worker / machine</label>
+        <select id="workerSelect">
+          <option value="1">Machine 1 - Worker 1</option><option value="2">Machine 2 - Worker 2</option>
+          <option value="3">Machine 3 - Worker 3</option><option value="4">Machine 4 - Worker 4</option>
+          <option value="5">Machine 5 - Worker 5</option><option value="6">Machine 6 - Worker 6</option>
+        </select>
+        <label data-en="Number of sarees received" data-te="అందుకున్న చీరల సంఖ్య">Number of sarees received</label>
+        <input id="quantity" type="number" min="1" step="1" placeholder="Enter quantity">
+        <label data-en="Date (automatic)" data-te="తేదీ (ఆటోమేటిక్)">Date (automatic)</label>
+        <input id="entryDate" type="date">
+        <button class="primary" onclick="addEntry()" data-en="Save production entry" data-te="ఉత్పత్తి వివరాలను సేవ్ చేయండి">Save production entry</button>
+        <p id="entryMessage" class="muted"></p>
+      </div>
+      <div class="panel">
+        <h2 data-en="Salary per saree settings" data-te="ఒక్క చీరకు జీతం సెట్టింగ్‌లు">Salary per saree settings</h2>
+        <p class="muted" data-en="Set one common rate for all workers, or give each worker a different rate." data-te="అందరికీ ఒకే రేటు పెట్టండి లేదా ప్రతి కార్మికుడికి వేర్వేరు రేటు ఇవ్వండి.">Set one common rate for all workers, or give each worker a different rate.</p>
+        <label data-en="Apply common rate to all workers (₹)" data-te="అందరు కార్మికులకు ఒకే రేటు (₹)">Apply common rate to all workers (₹)</label>
+        <div class="actions">
+          <input id="commonRate" type="number" min="0" step="1" value="750" style="max-width:220px">
+          <button class="secondary" onclick="applyCommonRate()" data-en="Apply to all" data-te="అందరికీ వర్తింపజేయండి">Apply to all</button>
+        </div>
+        <div class="table-wrap"><table><thead><tr>
+          <th data-en="Worker" data-te="కార్మికుడు">Worker</th>
+          <th data-en="Salary per saree (₹)" data-te="ఒక్క చీరకు జీతం (₹)">Salary per saree (₹)</th>
+        </tr></thead><tbody id="rateRows"></tbody></table></div>
+        <button class="primary" onclick="saveRates()" data-en="Save worker rates" data-te="కార్మికుల రేట్లను సేవ్ చేయండి">Save worker rates</button>
+        <p id="rateMessage" class="muted" aria-live="polite"></p>
+      </div>
+      <div class="panel">
+        <h2 data-en="Weekly salary by worker" data-te="కార్మికుల వారపు జీతం">Weekly salary by worker</h2>
+        <label data-en="Choose week starting date (Monday)" data-te="వారం ప్రారంభ తేదీ (సోమవారం) ఎంచుకోండి">Choose week starting date (Monday)</label>
+        <input id="weekStart" type="date">
+        <button class="secondary" onclick="renderOwner()">Update report</button>
+        <div class="table-wrap"><table><thead><tr>
+          <th data-en="Worker" data-te="కార్మికుడు">Worker</th><th data-en="Sarees" data-te="చీరలు">Sarees</th><th data-en="Rate / saree" data-te="ఒక్క చీర రేటు">Rate / saree</th><th data-en="Salary" data-te="జీతం">Salary</th>
+        </tr></thead><tbody id="salaryRows"></tbody></table></div>
+      </div>
+      <div class="panel">
+        <h2 data-en="All production entries" data-te="అన్ని ఉత్పత్తి నమోదులు">All production entries</h2>
+        <div class="table-wrap"><table><thead><tr>
+          <th data-en="Entry no." data-te="నమోదు సంఖ్య">Entry no.</th><th data-en="Date" data-te="తేదీ">Date</th><th data-en="Worker" data-te="కార్మికుడు">Worker</th><th data-en="Sarees" data-te="చీరలు">Sarees</th>
+        </tr></thead><tbody id="ownerRows"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="workerView" class="hidden">
+      <h2 data-en="My production" data-te="నా ఉత్పత్తి వివరాలు">My production</h2>
+      <div class="cards">
+        <div class="stat"><small data-en="My total sarees" data-te="నా మొత్తం చీరలు">My total sarees</small><strong id="myTotal">0</strong></div>
+        <div class="stat"><small data-en="My weekly salary" data-te="నా వారపు జీతం">My weekly salary</small><strong id="mySalary">₹0</strong></div>
+      </div>
+      <div class="panel">
+        <h2 data-en="Entries added by owner" data-te="యజమాని నమోదు చేసిన వివరాలు">Entries added by owner</h2>
+        <p class="muted" data-en="You can view your entries here. Only the owner can add or change production records." data-te="మీ నమోదులను ఇక్కడ చూడవచ్చు. ఉత్పత్తి వివరాలను యజమాని మాత్రమే నమోదు చేయగలరు లేదా మార్చగలరు.">You can view your entries here. Only the owner can add or change production records.</p>
+        <div class="table-wrap"><table><thead><tr>
+          <th data-en="Entry no." data-te="నమోదు సంఖ్య">Entry no.</th><th data-en="Date" data-te="తేదీ">తేదీ</th><th data-en="Sarees" data-te="చీరలు">చీరలు</th><th data-en="Salary amount" data-te="జీతం మొత్తం">జీతం మొత్తం</th>
+        </tr></thead><tbody id="workerRows"></tbody></table></div>
+      </div>
+    </section>
+  </section>
+</main>
+<footer>© 2026 Ayyappaswami Powerlooms</footer>
+
+<script>
+const RATE = 750;
+const defaultUsers = {
+  owner: {password:"owner123", role:"owner", worker:0},
+  worker1:{password:"worker123",role:"worker",worker:1},
+  worker2:{password:"worker123",role:"worker",worker:2},
+  worker3:{password:"worker123",role:"worker",worker:3},
+  worker4:{password:"worker123",role:"worker",worker:4},
+  worker5:{password:"worker123",role:"worker",worker:5},
+  worker6:{password:"worker123",role:"worker",worker:6}
+};
+let users = JSON.parse(localStorage.getItem("ayyappaUsers") || "null") || defaultUsers;
+const workerNames = ["","Worker 1","Worker 2","Worker 3","Worker 4","Worker 5","Worker 6"];
+let entries = JSON.parse(localStorage.getItem("ayyappaEntries") || "[]");
+let workerRates = JSON.parse(localStorage.getItem("ayyappaWorkerRates") || "null") || [750,750,750,750,750,750];
+let currentUser = null;
+let language = "en";
+
+function localISO(d=new Date()){
+  const x = new Date(d.getTime()-d.getTimezoneOffset()*60000);
+  return x.toISOString().slice(0,10);
+}
+function mondayOf(d=new Date()){
+  const x = new Date(d); x.setHours(12,0,0,0);
+  x.setDate(x.getDate() - ((x.getDay()+6)%7));
+  return localISO(x);
+}
+function setDates(){
+  document.getElementById("entryDate").value = localISO();
+  document.getElementById("weekStart").value = mondayOf();
+}
+function t(en,te){return language==="te"?te:en}
+function toggleLanguage(){
+  language = language==="en"?"te":"en";
+  document.documentElement.lang = language;
+  document.getElementById("langBtn").textContent = language==="en"?"తెలుగు":"English";
+  document.querySelectorAll("[data-en]").forEach(el=>el.textContent=el.dataset[language]);
+  document.getElementById("username").placeholder=t("Enter username","యూజర్ పేరు నమోదు చేయండి");
+  document.getElementById("password").placeholder=t("Enter password","పాస్‌వర్డ్ నమోదు చేయండి");
+  if(currentUser) {
+    document.getElementById("newUsername").placeholder=t("Enter new username","కొత్త యూజర్ పేరు నమోదు చేయండి");
+    document.getElementById("currentPassword").placeholder=t("Enter current password","ప్రస్తుత పాస్‌వర్డ్ నమోదు చేయండి");
+    document.getElementById("newPassword").placeholder=t("At least 6 characters","కనీసం 6 అక్షరాలు");
+    document.getElementById("confirmPassword").placeholder=t("Re-enter new password","మళ్లీ పాస్‌వర్డ్ నమోదు చేయండి");
+    refreshViews();
+  }
+}
+function login(){
+  const name=document.getElementById("username").value.trim().toLowerCase();
+  const pass=document.getElementById("password").value;
+  if(!users[name] || users[name].password!==pass){
+    document.getElementById("loginError").textContent=t("Incorrect username or password.","యూజర్ పేరు లేదా పాస్‌వర్డ్ తప్పు.");
+    return;
+  }
+  currentUser={name,...users[name]};
+  document.getElementById("loginError").textContent="";
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("appPanel").classList.remove("hidden");
+  document.getElementById("ownerView").classList.toggle("hidden",currentUser.role!=="owner");
+  document.getElementById("workerView").classList.toggle("hidden",currentUser.role!=="worker");
+  document.getElementById("welcome").textContent=currentUser.role==="owner"?t("Welcome, Owner","స్వాగతం, యజమాని"):t("Welcome, "+workerNames[currentUser.worker],"స్వాగతం, "+workerNames[currentUser.worker]);
+  document.getElementById("roleText").textContent=currentUser.role==="owner"?t("Owner access","యజమాని యాక్సెస్"):t("View-only worker access","కార్మికుడి వీక్షణ యాక్సెస్");
+  refreshViews();
+}
+function logout(){
+  currentUser=null;
+  hideAccountSettings();
+  document.getElementById("appPanel").classList.add("hidden");
+  document.getElementById("loginPanel").classList.remove("hidden");
+  document.getElementById("password").value="";
+}
+function save(){localStorage.setItem("ayyappaEntries",JSON.stringify(entries));}
+function saveUsers(){localStorage.setItem("ayyappaUsers",JSON.stringify(users));}
+function showAccountSettings(){
+  document.getElementById("accountSettings").classList.remove("hidden");
+  document.getElementById("newUsername").value=currentUser.name;
+  document.getElementById("currentPassword").value="";
+  document.getElementById("newPassword").value="";
+  document.getElementById("confirmPassword").value="";
+  document.getElementById("accountMessage").textContent="";
+}
+function hideAccountSettings(){
+  document.getElementById("accountSettings").classList.add("hidden");
+}
+function changeCredentials(){
+  if(!currentUser)return;
+  const oldPass=document.getElementById("currentPassword").value;
+  const newName=document.getElementById("newUsername").value.trim().toLowerCase();
+  const newPass=document.getElementById("newPassword").value;
+  const confirm=document.getElementById("confirmPassword").value;
+  const message=document.getElementById("accountMessage");
+  if(users[currentUser.name].password!==oldPass){
+    message.textContent=t("Current password is incorrect.","ప్రస్తుత పాస్‌వర్డ్ తప్పు.");
+    message.style.color="#b42318";return;
+  }
+  if(!/^[a-z0-9_]{3,20}$/.test(newName)){
+    message.textContent=t("Username must be 3–20 characters (letters, numbers or underscore).","యూజర్ పేరు 3–20 అక్షరాలు ఉండాలి (ఆంగ్ల అక్షరాలు, సంఖ్యలు లేదా అండర్‌స్కోర్).");
+    message.style.color="#b42318";return;
+  }
+  if(newName!==currentUser.name && users[newName]){
+    message.textContent=t("That username is already taken.","ఈ యూజర్ పేరు ఇప్పటికే వాడుకలో ఉంది.");
+    message.style.color="#b42318";return;
+  }
+  if(newPass.length<6){
+    message.textContent=t("New password must be at least 6 characters.","కొత్త పాస్‌వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.");
+    message.style.color="#b42318";return;
+  }
+  if(newPass!==confirm){
+    message.textContent=t("The new passwords do not match.","కొత్త పాస్‌వర్డ్‌లు సరిపోలడం లేదు.");
+    message.style.color="#b42318";return;
+  }
+  const account=users[currentUser.name];
+  delete users[currentUser.name];
+  account.password=newPass;
+  users[newName]=account;
+  saveUsers();
+  currentUser={name:newName,...account};
+  message.style.color="#168653";
+  message.textContent=t("Login details updated. Use your new username and password next time.","లాగిన్ వివరాలు మార్చబడ్డాయి. తదుపరి సారి కొత్త యూజర్ పేరు, పాస్‌వర్డ్ ఉపయోగించండి.");
+  document.getElementById("welcome").textContent=currentUser.role==="owner"?t("Welcome, Owner","స్వాగతం, యజమాని"):t("Welcome, "+workerNames[currentUser.worker],"స్వాగతం, "+workerNames[currentUser.worker]);
+}
+function addEntry(){
+  if(!currentUser || currentUser.role!=="owner")return;
+  const worker=Number(document.getElementById("workerSelect").value);
+  const quantity=Number(document.getElementById("quantity").value);
+  const date=document.getElementById("entryDate").value;
+  if(!Number.isInteger(quantity)||quantity<1){alert(t("Enter a whole number greater than zero.","సున్నా కంటే ఎక్కువ పూర్తి సంఖ్యను నమోదు చేయండి."));return;}
+  if(!date){alert(t("Select a date.","తేదీ ఎంచుకోండి."));return;}
+  const entry={id:Date.now(),number:entries.length?Math.max(...entries.map(e=>e.number))+1:1,worker,quantity,date};
+  entries.push(entry);save();
+  document.getElementById("quantity").value="";
+  document.getElementById("entryMessage").textContent=t("Saved successfully. Entry number: ","విజయవంతంగా సేవ్ అయింది. నమోదు సంఖ్య: ")+entry.number;
+  refreshViews();
+}
+function weekRange(){
+  const start=document.getElementById("weekStart").value;
+  if(!start)return null;
+  const d=new Date(start+"T12:00:00");d.setDate(d.getDate()+6);
+  return {start,end:localISO(d)};
+}
+function inWeek(e,w){return e.date>=w.start&&e.date<=w.end;}
+function refreshViews(){if(currentUser?.role==="owner")renderOwner();if(currentUser?.role==="worker")renderWorker();}
+function applyCommonRate(){
+  const value=Number(document.getElementById("commonRate").value);
+  if(!Number.isFinite(value)||value<0||!Number.isInteger(value)){
+    alert(t("Enter a valid whole-number rate (zero or more).","సరైన పూర్తి సంఖ్య రేటును నమోదు చేయండి."));
+    return;
+  }
+  workerRates=workerRates.map(()=>value);
+  localStorage.setItem("ayyappaWorkerRates",JSON.stringify(workerRates));
+  renderOwner();
+  document.getElementById("rateMessage").textContent=t("Common rate applied to all six workers. Click Save worker rates after any individual edits.","ఆరుగురు కార్మికులందరికీ ఒకే రేటు వర్తింపజేయబడింది.");
+}
+function saveRates(){
+  const inputs=[...document.querySelectorAll(".worker-rate-input")];
+  const updated=workerRates.slice();
+  for(const input of inputs){
+    const value=Number(input.value);
+    if(!Number.isInteger(value)||value<0){
+      alert(t("Each worker rate must be a whole number (zero or more).","ప్రతి కార్మికుడి రేటు సున్నా లేదా అంతకంటే ఎక్కువ పూర్తి సంఖ్య అయి ఉండాలి."));
+      return;
+    }
+    updated[Number(input.dataset.worker)-1]=value;
+  }
+  workerRates=updated;
+  localStorage.setItem("ayyappaWorkerRates",JSON.stringify(workerRates));
+  renderOwner();
+  document.getElementById("rateMessage").textContent=t("Worker salary rates saved successfully.","కార్మికుల జీతం రేట్లు విజయవంతంగా సేవ్ అయ్యాయి.");
+  if(currentUser?.role==="worker")renderWorker();
+}
+function renderOwner(){
+  const w=weekRange();let all=entries.reduce((s,e)=>s+e.quantity,0);
+  document.getElementById("allSarees").textContent=all;
+  let weekTotal=w?entries.filter(e=>inWeek(e,w)).reduce((s,e)=>s+e.quantity*Number(workerRates[e.worker-1]||0),0):0;
+  document.getElementById("weekSalary").textContent="₹"+weekTotal.toLocaleString("en-IN");
+  let salaryHTML="",ownerHTML="",rateHTML="";
+  for(let i=1;i<=6;i++){
+    const count=w?entries.filter(e=>e.worker===i&&inWeek(e,w)).reduce((s,e)=>s+e.quantity,0):0;
+    const rate=Number(workerRates[i-1]||0);
+    salaryHTML+=`<tr><td>${workerNames[i]}</td><td>${count}</td><td>₹${rate.toLocaleString("en-IN")}</td><td>₹${(count*rate).toLocaleString("en-IN")}</td></tr>`;
+    rateHTML+=`<tr><td>${workerNames[i]}</td><td><input class="worker-rate-input" data-worker="${i}" type="number" min="0" step="1" value="${rate}" aria-label="Salary rate for ${workerNames[i]}"></td></tr>`;
+  }
+  document.getElementById("rateRows").innerHTML=rateHTML;
+  document.getElementById("commonRate").value=workerRates.every(r=>r===workerRates[0])?workerRates[0]:750;
+  [...entries].sort((a,b)=>b.id-a.id).forEach(e=>{
+    ownerHTML+=`<tr><td>${e.number}</td><td>${e.date}</td><td>${workerNames[e.worker]}</td><td>${e.quantity}</td></tr>`;
+  });
+  document.getElementById("salaryRows").innerHTML=salaryHTML;
+  document.getElementById("ownerRows").innerHTML=ownerHTML||`<tr><td colspan="4">${t("No entries yet","ఇంకా నమోదులు లేవు")}</td></tr>`;
+}
+function renderWorker(){
+  const w=weekRange(),mine=entries.filter(e=>e.worker===currentUser.worker);
+  const total=mine.reduce((s,e)=>s+e.quantity,0);
+  const weekly=w?mine.filter(e=>inWeek(e,w)).reduce((s,e)=>s+e.quantity,0):0;
+  document.getElementById("myTotal").textContent=total;
+  document.getElementById("mySalary").textContent="₹"+(weekly*Number(workerRates[currentUser.worker-1]||0)).toLocaleString("en-IN");
+  document.getElementById("workerRows").innerHTML=[...mine].sort((a,b)=>b.id-a.id).map(e=>
+    `<tr><td>${e.number}</td><td>${e.date}</td><td>${e.quantity}</td><td>₹${(e.quantity*Number(workerRates[currentUser.worker-1]||0)).toLocaleString("en-IN")}</td></tr>`
+  ).join("")||`<tr><td colspan="4">${t("No entries yet","ఇంకా నమోదులు లేవు")}</td></tr>`;
+}
+document.getElementById("weekStart").addEventListener("change",refreshViews);
+setDates();
+</script>
+</body>
+</html>
